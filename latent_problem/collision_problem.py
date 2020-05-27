@@ -9,7 +9,7 @@ from sklearn.gaussian_process import GaussianProcessClassifier,GaussianProcessRe
 from sklearn.gaussian_process.kernels import RBF,WhiteKernel,ConstantKernel
 from target_funcs import *
 
-class latent_problem():
+class Latent_Problem():
 
 	def __init__(self, f):
 		'''Init (1)training and testing data (2) form the network'''
@@ -33,7 +33,7 @@ class latent_problem():
 		self.opt=Adam(1e-3)
 		#self.opt=SciPyMin('l-bfgs-b')
 
-	def test_latent_space(self, iter_num:int=10, tol:float=1e-3):
+	def find_collision(self, iter_num:int=10, tol:float=1e-3):
 		''' 
 		Test problem in Latent space
 		Return: if find the problem
@@ -79,10 +79,10 @@ class latent_problem():
 		plt.show()
 
 if __name__=='__main__':
+	test = Latent_Problem(target_func1)
 	for i in range(0,20,2):
-		if test_latent_space(i):
+		if test.find_collision():
 			print("Break: ", i)
 			break
 
-	# plt.plot(x_plot,gp.layers[-2].out)
 
