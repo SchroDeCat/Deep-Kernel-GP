@@ -74,7 +74,6 @@ class Dense(Layer):
 
 class CovMat(Layer):
 	def __init__(self,alpha=1e-1,var=1.0,kernel='rbf',alpha_fixed=False):
-
 		self.trainable=True
 		self.s_alpha=alpha
 		self.var = var
@@ -82,16 +81,16 @@ class CovMat(Layer):
 		self.alpha_fixed=alpha_fixed
 		self.kernel=kernel
 		if kernel=='rbf':
-			self.forward,self.backward = self.forward_rbf,self.backward_rbf
+			self.forward, self.backward = self.forward_rbf, self.backward_rbf
 		elif kernel == 'dot':
 			self.forward,self.backward = self.forward_dot,self.backward_dot
 		self.predict=self.forward
+
 	def initialize_ws(self):
-		self.W=numpy.ones((1,2))*numpy.array([[numpy.log(self.s_alpha/(1.0-self.s_alpha)),numpy.sqrt(self.var)]])
+		self.W=numpy.ones((1,2)) * numpy.array([[numpy.log(self.s_alpha/(1.0-self.s_alpha)),numpy.sqrt(self.var)]])
 		self.b=numpy.zeros((1,1))
 		self.dW=numpy.zeros((1,2))
 		self.db=numpy.zeros((1,1))
-	
 	
 	def forward_dot(self,X):
 		self.inp=X
@@ -109,6 +108,7 @@ class CovMat(Layer):
 		
 		self.out=self.s
 		return self.out
+	
 	def backward_dot(self,err):
 		if not self.alpha_fixed:
 			a_err=err*self.s_alpha*(1.0-self.s_alpha)
@@ -118,14 +118,15 @@ class CovMat(Layer):
 		#Backpropagate through dot product:
 		err2=2.0*numpy.dot(err,self.inp)/err.shape[0]#/err.shape[0]
 		return err2
+	
 	def forward_rbf(self,X):
 		self.inp=X
 		
 		#Calculate distances
 		ll=[]
-		for i in range(0,X.shape[1]):
+		for i in range(0, X.shape[1]):
 			tmp=X[:,i].reshape(1,-1)-X[:,i].reshape(-1,1)
-			ll.append(tmp.reshape(X.shape[0],X.shape[0],1))
+			ll.append(tmp.reshape(X.shape[0], X.shape[0], 1))
 		self.z=numpy.concatenate(ll,-1)
 		
 		#Apply RBF function to distance
@@ -139,7 +140,6 @@ class CovMat(Layer):
 		self.s_alpha=1.0/(numpy.exp(-self.W[0,0])+1.0)
 		self.out=self.s+(self.s_alpha+1e-8)*numpy.identity(X.shape[0])
 		return self.out
-		
 		
 	def backward_rbf(self,err):
 		#Update trainable weight gradients (if applicable) I.e. noise and variance.
@@ -247,5 +247,3 @@ class RNNCell(Layer):
 			
 
 		return erra
-
-		
