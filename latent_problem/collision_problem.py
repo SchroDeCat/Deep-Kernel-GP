@@ -15,18 +15,18 @@ from target_funcs import *
 from utils import time_process
 
 class Collision_Problem():
-
-	def __init__(self, f, train_num=100):
+	def __init__(self, f, train_num=100, noise=0):
 		'''Init (1)training and testing data (2) form the network'''
 		np.random.seed(0)
 		self.target_func = f
+		self.noise = noise
 		self.x_train=np.random.random(size=(train_num,1)) - .5
-		self.y_train=f(self.x_train)+np.random.normal(0.0,0.01,size=self.x_train.shape)
-		self.x_test=np.linspace(-.7, .0, 10000).reshape(-1,1)
+		self.y_train=f(self.x_train)+np.random.normal(0.0,noise,size=self.x_train.shape)
+		self.x_test=np.linspace(-.7, .7, 10000).reshape(-1,1)
 		self.x_plot=np.linspace(-.7, .7, 10000).reshape(-1,1)
 		self.model()
 
-	def model(self,):
+	def model(self, latent_dim:int=1):
 		'''Keras style layers + optimizers'''
 		self.layers=[]
 		# self.layers.append(Dense(32, activation='tanh'))
@@ -37,15 +37,16 @@ class Collision_Problem():
 		# self.layers.append(Dropout(keep_prob=0.9))
 		self.layers.append(Dense(16, activation='tanh'))
 		self.layers.append(Dropout(keep_prob=0.9))
-		self.layers.append(Dense(1))
-		# self.layers.append(Scale(fixed=True, init_vals=64.0))
-		self.layers.append(CovMat(kernel='rbf', alpha_fixed=False))
+		self.layers.append(Dense(latent_dim))
+		self.layers.append(Scale(fixed=True, init_vals=1.1))	# why need scaling
+		# self.layers.append(CovMat(kernel='rbf', alpha_fixed=False))
+		self.layers.append(CovMat(kernel='rbf', alpha_fixed=True, alpha=self.noise))	# noise free
 		# optimizer
 		self.opt=Adam(1e-3)
 		#self.opt=SciPyMin('l-bfgs-b')
 
 	@time_process
-	def find_collision(self, iter_num:int=10, tol:float=1e-3):
+	def find_collision(self, iter_num:int=1000, tol:float=1e-3):
 		''' 
 		Test problem in Latent space
 		Return: if find the problem
@@ -88,6 +89,28 @@ class Collision_Problem():
 		ax2.set_title("Prediction")
 		
 		plt.legend(['Training samples', 'True function', 'Predicted function','Prediction stddev'])
+		plt.show()
+
+class Collision_Problem_2d(Collision_Problem):
+	'''Noise free 2-dimensional version'''
+	def __init__(self, f, train_num=100, dim:int=2, noise:float=0):
+		np.random.seed(0)
+		self.target_func = f
+		self.x_train = np.random.unifrom(low=np.ones(dim)*-1.0, high=np.ones(dim)*1.0)
+		self.y_train = f(self.x_train)+np.random.normal(0.0,noise,size=self.x_train.shape)
+		self.base_test = np.linspace(-1.0, 1.0, 10000)
+		self.x_test = np.meshgrid(self.base_test, self,base_test)
+		self.x_plot = self.x_test
+		self.model()
+
+	def plot_collision(self):
+		''' Plot the collision on latent space '''
+		fig = plt.figure(figsize=(5,3.2))
+		ax1 = fig.add_subplot(121)
+		ax1.plot(self.x_plot, self.gp.fast_forward(self.x_plot))
+		ax1.set_xlabel('X')
+		ax1.set_ylabel('Z')
+		ax1.set_title("Latent Map")
 		plt.show()
 
 if __name__=='__main__':

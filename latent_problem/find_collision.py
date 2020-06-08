@@ -1,4 +1,4 @@
-from target_funcs import target_func1
+from target_funcs import *
 from collision_problem import Collision_Problem
 from argparse import ArgumentParser
 
@@ -9,7 +9,7 @@ if __name__=='__main__':
     parser.add_argument('--i', default=10000, help='Iterations')
     args = parser.parse_args()
 
-    test = Collision_Problem(lambda x:target_func1(x/3.0 + 0.4), train_num=int(args.n))
+    test = Collision_Problem(lambda x:target_func2(x), train_num=int(args.n))
     if test.find_collision(iter_num=int(args.i)):
         print("Collision Found!")
     else:
