@@ -94,14 +94,15 @@ class Collision_Problem():
 
 class Collision_Problem_2d(Collision_Problem):
 	'''Noise free 2-dimensional version'''
-	def __init__(self, f, train_num:int=100, dim:int=2, noise:float=1e-6):
+	def __init__(self, f, train_num:int=100, dim:int=2, noise:float=0):
 		np.random.seed(0)
 		self.resolution = 100j
 		self.resolution_num = 100
 		self.noise = noise
 		self.target_func = f
 		self.x_train = np.random.uniform(low=np.ones(dim)*-1.0, high=np.ones(dim)*1.0, size=[train_num, dim])
-		self.y_train = np.array([self.target_func(vec) for vec in self.x_train]) + np.random.normal(0.0, noise, size = self.x_train.shape[0])
+		# self.y_train = np.array([self.target_func(vec) for vec in self.x_train]) + np.random.normal(0.0, noise, size = self.x_train.shape[0])
+		self.y_train = np.array([self.target_func(vec) for vec in self.x_train])
 		self.y_train = self.y_train.reshape(-1,1)
 		# print(f"x_train {self.x_train[0]} {self.x_train.shape}; y_train {self.y_train[0]} {self.y_train.shape}")
 		self.base_test = np.linspace(-1.0, 1.0, 10000)	# latent space is still one dimension
@@ -148,7 +149,7 @@ class Collision_Problem_2d(Collision_Problem):
 		self.layers.append(Dense(8, activation='tanh'))
 		self.layers.append(Dropout(keep_prob=0.9))
 		self.layers.append(Dense(latent_dim))
-		self.layers.append(Scale(fixed=True, init_vals=64))	# why need scaling
+		self.layers.append(Scale(fixed=True, init_vals=10))	# why need scaling
 		self.layers.append(CovMat(kernel='rbf', alpha_fixed=False))
 		# self.layers.append(CovMat(kernel='rbf', alpha_fixed=False, alpha=self.noise))	# noise free
 		# optimizer
@@ -198,6 +199,6 @@ if __name__=='__main__':
 	# 	if test.find_collision(iter_num=i):
 	# 		tqdm.write("Break: ", i)
 	# 		break
-	test.find_collision(iter_num=1000)
+	test.find_collision(iter_num=5000)
 	test.plot_collision() # plot result at the end if collision not found
 

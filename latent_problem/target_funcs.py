@@ -11,5 +11,5 @@ def target_func2(x):
 
 def target_func3(x):
     '''high dimensional input'''
-    return np.norm(x)
+    return np.linalg.norm(x)
 
