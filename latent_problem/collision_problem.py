@@ -101,16 +101,13 @@ class Collision_Problem_2d(Collision_Problem):
 		self.noise = noise
 		self.target_func = f
 		self.x_train = np.random.uniform(low=np.ones(dim)*-1.0, high=np.ones(dim)*1.0, size=[train_num, dim])
-		# self.y_train = np.array([self.target_func(vec) for vec in self.x_train]) + np.random.normal(0.0, noise, size = self.x_train.shape[0])
 		self.y_train = np.array([self.target_func(vec) for vec in self.x_train])
 		self.y_train = self.y_train.reshape(-1,1)
-		# print(f"x_train {self.x_train[0]} {self.x_train.shape}; y_train {self.y_train[0]} {self.y_train.shape}")
 		self.base_test = np.linspace(-1.0, 1.0, 10000)	# latent space is still one dimension
 		self.x_test = np.mgrid[-1.0:1:(self.resolution),-1.0:1:(self.resolution)].reshape(dim, -1).T
 		self.x_plot = np.mgrid[-1.0:1:(self.resolution),-1.0:1:(self.resolution)]
 		self.y_plot = np.array([self.target_func(vec) for vec in self.x_test]).T.reshape([self.resolution_num, self.resolution_num])
 		self.model()
-		# print(f"x_test{self.x_test[0]} {self.x_test.shape}; y_plot {self.y_plot.shape}")
 
 	def plot_collision(self):
 		''' Plot the collision on latent space '''
@@ -195,10 +192,6 @@ if __name__=='__main__':
 	# test.plot_collision() # plot result at the end if collision not found
 	'''2d case'''
 	test = Collision_Problem_2d(target_func3)
-	# for i in tqdm(range(0,20,2),desc='Iter Num'):
-	# 	if test.find_collision(iter_num=i):
-	# 		tqdm.write("Break: ", i)
-	# 		break
 	test.find_collision(iter_num=5000)
 	test.plot_collision() # plot result at the end if collision not found
 

@@ -18,7 +18,9 @@ def loss_2d(
     return tf.reduce_mean(tf.math.maximum(tf.subtract(target_space, latent_space), 0))
 
 
-def train_2d(loss, model, opt, train_set:np.ndarray, original_dim:int, batch_size:int):
+def train_2d(
+    loss, model, opt, train_set: np.ndarray, original_dim: int, batch_size: int
+):
     """
     Train set contains original vec & label
     """
@@ -43,7 +45,15 @@ def train_2d(loss, model, opt, train_set:np.ndarray, original_dim:int, batch_siz
     return latent_error
 
 
-def train_loop_2d(model, opt, loss, dataset:np.ndarray, epochs:int, original_dim:int, batch_size:int):
+def train_loop_2d(
+    model,
+    opt,
+    loss,
+    dataset: np.ndarray,
+    epochs: int,
+    original_dim: int,
+    batch_size: int,
+):
     """Training loop for 2d input"""
     for epoch in range(epochs):
         epoch_loss = 0

@@ -2,6 +2,7 @@ import numpy as np
 from typing import List
 import tensorflow as tf
 
+
 def norm_square(t1: np.ndarray, t2: np.ndarray) -> float:
     """Calculate distance of two input vectors"""
     return tf.reduce_sum(tf.square(tf.subtract(t1, t2)))
