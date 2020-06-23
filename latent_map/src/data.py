@@ -1,5 +1,6 @@
 import numpy as np
 from typing import List
+from itertools import product
 import tensorflow as tf
 assert tf.__version__.startswith("2")
 
@@ -61,8 +62,8 @@ class Data_Factory:
         self.batch_size = batch_size
         self.raw_data = obj_func(dim=dim, num = 3 * batch_size)
         self.raw_data = self.raw_data.astype("float32")
-        self.x_train = train_data[:,:-1].astype('float32') 
-        self.y_train = train_data[:,-1]
+        self.x_train = self.raw_data[:,:-1].astype('float32') 
+        self.y_train = self.raw_data[:,-1]
         # dataset 2d
         self.compond = list(product(self.raw_data, self.raw_data))
         self.feed_data = tf.data.Dataset.from_tensor_slices(self.compond).batch(batch_size)
