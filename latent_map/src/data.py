@@ -1,6 +1,7 @@
 import numpy as np
 from typing import List
 from itertools import product
+from matplotlib import pyplot as plt
 import tensorflow as tf
 assert tf.__version__.startswith("2")
 
@@ -37,12 +38,12 @@ class Data_Factory_Base:
         input_dim = np.shape(test_p)[0]
         if input_dim != np.size(test_p) and input_dim > 1:
             value = [
-                Data_Factory.nearest(self.data, test_p[i, :])[-1]
+                Data_Factory_Base.nearest(self.data, test_p[i, :])[-1]
                 for i in range(input_dim)
             ]
             return value
         else:
-            data_point = Data_Factory.nearest(self.data, test_p)
+            data_point = Data_Factory_Base.nearest(self.data, test_p)
             return data_point[-1]
 
     def plot_1Dsample(self):

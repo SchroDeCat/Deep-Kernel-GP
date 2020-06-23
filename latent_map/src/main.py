@@ -6,6 +6,7 @@ from data import Data_Factory_Base
 from models import ContEncoder
 from train import train_loop_2d
 from loss import loss_2d
+from utils import sample_data
 
 assert tf.__version__.startswith("2")
 
@@ -13,11 +14,12 @@ assert tf.__version__.startswith("2")
 DF = Data_Factory_Base()
 dim = 3
 batch_size = 40
+train_num = 10000
 train_data = DF.convex_1(dim=dim, num= 60 * batch_size)
 
 # dataset 2d
-compond = list(product(train_data.astype("float32"), train_data.astype("float32")))
-feed_data = tf.data.Dataset.from_tensor_slices(compond).batch(batch_size)
+sampled_data = sample_data(train_data, sample_num = train_num)
+feed_data = tf.data.Dataset.from_tensor_slices(sampled_data).batch(batch_size)
 
 # define training process
 model_2d = ContEncoder(dest_dim=dim - 1, original_dim=dim)
